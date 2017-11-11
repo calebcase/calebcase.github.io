@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Caleb Case</title>
+    <link>http://calebcase.github.io/post/</link>
+    <description>Recent content in Posts on Caleb Case</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 11 Nov 2017 16:00:00 -0500</lastBuildDate>
+    
+	<atom:link href="http://calebcase.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>binary tree</title>
+      <link>http://calebcase.github.io/post/binary-tree/</link>
+      <pubDate>Sat, 11 Nov 2017 16:00:00 -0500</pubDate>
+      
+      <guid>http://calebcase.github.io/post/binary-tree/</guid>
+      <description>A brief walkthrough of a binary tree in Idris.
+The final result:
+data Tree : Nat -&amp;gt; Nat -&amp;gt; Type where Leaf : (v : Nat) -&amp;gt; Tree v v Left : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; .{auto prf : lm `LT` v} -&amp;gt; Tree v v Right : (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .{auto prf : v `LT` rm} -&amp;gt; Tree v rm Node : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .</description>
+    </item>
+    
+  </channel>
+</rss>

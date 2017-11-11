@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Caleb Case</title>
-    <link>http://calebcase.github.io/</link>
-    <description>Recent content on Caleb Case</description>
+    <title>Slides on Caleb Case</title>
+    <link>http://calebcase.github.io/slide/</link>
+    <description>Recent content in Slides on Caleb Case</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 11 Nov 2017 16:00:00 -0500</lastBuildDate>
     
-	<atom:link href="http://calebcase.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://calebcase.github.io/slide/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,17 +19,6 @@
       <guid>http://calebcase.github.io/slide/binary-tree/</guid>
       <description>class: center, middle
 Binary Search Tree Just a Tree data Tree a = Empty | Node (Tree a) a (Tree a)  Just a Tree data Tree a = Empty | Node (Tree a) a (Tree a)  Same Thing, Different Syntax data Tree : a -&amp;gt; Type where Empty : Tree a Node : Tree a -&amp;gt; a -&amp;gt; Tree a -&amp;gt; Tree a  Just a Tree data Tree a = Empty | Node (Tree a) a (Tree a)  Same Thing, Different Syntax data Tree : a -&amp;gt; Type where Empty : Tree a Node : Tree a -&amp;gt; a -&amp;gt; Tree a -&amp;gt; Tree a  Yup, that&amp;rsquo;s a tree&amp;hellip; *BinaryTree&amp;gt; Node Empty 3 Empty Node Empty 3 Empty : Tree Integer  But it&amp;rsquo;s not a binary search tree (yet).</description>
-    </item>
-    
-    <item>
-      <title>binary tree</title>
-      <link>http://calebcase.github.io/post/binary-tree/</link>
-      <pubDate>Sat, 11 Nov 2017 16:00:00 -0500</pubDate>
-      
-      <guid>http://calebcase.github.io/post/binary-tree/</guid>
-      <description>A brief walkthrough of a binary tree in Idris.
-The final result:
-data Tree : Nat -&amp;gt; Nat -&amp;gt; Type where Leaf : (v : Nat) -&amp;gt; Tree v v Left : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; .{auto prf : lm `LT` v} -&amp;gt; Tree v v Right : (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .{auto prf : v `LT` rm} -&amp;gt; Tree v rm Node : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .</description>
     </item>
     
   </channel>

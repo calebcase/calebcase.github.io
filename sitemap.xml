@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://calebcase.github.io/slide/binary-tree/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://calebcase.github.io/post/binary-tree/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+  </url>
   
   <url>
     <loc>http://calebcase.github.io/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -13,7 +23,38 @@
   </url>
   
   <url>
+    <loc>http://calebcase.github.io/tags/idris/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://calebcase.github.io/post/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://calebcase.github.io/slide/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://calebcase.github.io/tags/slides/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://calebcase.github.io/categories/slides/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://calebcase.github.io/tags/</loc>
+    <lastmod>2017-11-11T16:00:00-05:00</lastmod>
     <priority>0</priority>
   </url>
   

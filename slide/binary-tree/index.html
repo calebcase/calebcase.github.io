@@ -1,0 +1,464 @@
+<head>
+  <title>
+    Binary Tree | Caleb Case
+  </title>
+  <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
+
+</head>
+<body>
+  <textarea id="source">
+class: center, middle
+
+# Binary Search Tree
+
+---
+
+## Just a Tree
+
+```idris
+data Tree a = Empty
+            | Node (Tree a) a (Tree a)
+```
+
+---
+
+## Just a Tree
+
+```idris
+data Tree a = Empty
+            | Node (Tree a) a (Tree a)
+```
+
+### Same Thing, Different Syntax
+
+```idris
+data Tree : a -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; a -&gt; Tree a -&gt; Tree a
+```
+
+---
+
+## Just a Tree
+
+```idris
+data Tree a = Empty
+            | Node (Tree a) a (Tree a)
+```
+
+### Same Thing, Different Syntax
+
+```idris
+data Tree : a -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; a -&gt; Tree a -&gt; Tree a
+```
+
+### Yup, that&#39;s a tree...
+
+```idris
+*BinaryTree&gt; Node Empty 3 Empty
+Node Empty 3 Empty : Tree Integer
+```
+
+---
+
+### But it&#39;s not a binary search tree (yet).
+
+```idris
+data Tree : a -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; a -&gt; Tree a -&gt; Tree a
+```
+
+```idris
+*BinaryTree&gt; Node (Node Empty 5 Empty) 3 (Node Empty 10 Empty)
+Node (Node Empty 5 Empty) 3 (Node Empty 10 Empty) : Tree Integer
+```
+
+---
+
+### How to enforce our constraints?
+
+Let&#39;s back up a bit... Can we solve this for just a single pair of values?
+
+#### We want a data constructor like:
+
+```idris
+data Less : a -&gt; b -&gt; Type where
+```
+
+#### That will reject construction if `a &gt;= b`:
+
+```idris
+*LessThan&gt; 3 `MyLT` 3
+(input):1:4-8:When checking argument prf to constructor Main.MyLT:
+        Can&#39;t find a value of type 
+                LTE 4 3
+```
+
+#### And will allow construction if `a &lt; b`:
+
+```idris
+*LessThan&gt; 2 `MyLT` 3
+MyLT 2 3 : MyLessThan 2 3
+```
+
+---
+
+class: center, middle
+
+![the power of](https://media.giphy.com/media/isuB5dvkyJptu/giphy.gif)
+
+---
+
+class: center, middle
+
+# Dependent Types
+
+---
+
+#### And some really handy pre-existing definitions...
+
+```idris
+*LessThan&gt; :doc Nat.LT
+Prelude.Nat.LT : Nat -&gt; Nat -&gt; Type
+    Strict less than
+    
+    The function is Total
+```
+
+```idris
+*LessThan&gt; :printdef Nat.LT
+LT : Nat -&gt; Nat -&gt; Type
+LT left right = LTE (S left) right
+```
+
+```idris
+*LessThan&gt; :printdef Nat.LTE
+data LTE : Nat -&gt; Nat -&gt; Type where
+  LTEZero : LTE 0 right
+  LTESucc : LTE left right -&gt; LTE (S left) (S right)
+```
+---
+
+#### Only construct the value if you have proof.
+
+```idris
+data MyLessThan : l -&gt; r -&gt; Type where
+  MyLT : (left : Nat) -&gt;
+         (right : Nat) -&gt;
+         (prf : left `LT` right) -&gt;
+         left `MyLessThan` right
+```
+
+#### Geez it would be nice if the compiler would find the proof for us!
+
+```idris
+data MyLessThan : l -&gt; r -&gt; Type where
+  MyLT : (left : Nat) -&gt;
+         (right : Nat) -&gt;
+         .{auto prf : left `LT` right} -&gt;
+         left `MyLessThan` right
+```
+
+---
+
+### Does it work?
+
+```idris
+*LessThan&gt; 1 `MyLT` 2
+MyLT 1 2 : MyLessThan 1 2
+*LessThan&gt; 1 `MyLT` 3
+MyLT 1 3 : MyLessThan 1 3
+*LessThan&gt; 2 `MyLT` 3
+MyLT 2 3 : MyLessThan 2 3
+```
+
+```idris
+*LessThan&gt; 2 `MyLT` 2
+(input):1:4-8:When checking argument prf to constructor Main.MyLT:
+        Can&#39;t find a value of type 
+                LTE 3 2
+*LessThan&gt; 2 `MyLT` 1
+(input):1:4-8:When checking argument prf to constructor Main.MyLT:
+        Can&#39;t find a value of type 
+                LTE 3 1
+```
+
+---
+
+class: center, middle
+
+### Excellent, it works just the way we wanted!
+
+![magic](https://media.giphy.com/media/12NUbkX6p4xOO4/giphy.gif)
+
+---
+
+### Back to that binary search tree...
+
+```idris
+data Tree : a -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; a -&gt; Tree a -&gt; Tree a
+```
+---
+
+### This is way to flexible...
+
+```idris
+data Tree : a -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; a -&gt; Tree a -&gt; Tree a
+```
+
+#### Let&#39;s pin it down a bit.
+
+First we&#39;ll make this specifically a tree of natural numbers.
+
+```idris
+data Tree : Nat -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; Nat -&gt; Tree a -&gt; Tree a
+```
+
+---
+
+### Still too flexy...
+
+```idris
+data Tree : Nat -&gt; Type where
+  Empty : Tree a
+  Node : Tree a -&gt; Nat -&gt; Tree a -&gt; Tree a
+```
+
+#### Let&#39;s be more concrete about the shape this tree can take.
+
+We will do this by removing the `Empty` constructor.
+
+```idris
+data Tree : Nat -&gt; Type where
+  Leaf  : (v : Nat) -&gt;
+          Tree v
+  Left  : Tree lv -&gt;
+          (v : Nat) -&gt;
+          Tree v
+  Right : (v : Nat) -&gt;
+          Tree rv -&gt;
+          Tree v
+  Node  : Tree lv -&gt;
+          (v : Nat) -&gt;
+          Tree rv -&gt;
+          Tree v
+```
+
+---
+
+### Getting closer...
+
+```idris
+data Tree : Nat -&gt; Type where
+  Leaf  : (v : Nat) -&gt;
+          Tree v
+  Left  : Tree lv -&gt;
+          (v : Nat) -&gt;
+          Tree v
+  Right : (v : Nat) -&gt;
+          Tree rv -&gt;
+          Tree v
+  Node  : Tree lv -&gt;
+          (v : Nat) -&gt;
+          Tree rv -&gt;
+          Tree v
+```
+
+#### Our next step is to capture the maximum of the trees values.
+
+---
+
+### Capturing the maximum.
+
+```idris
+data Tree : Nat -&gt; Nat -&gt; Type where
+  Leaf  : (v : Nat) -&gt;
+          Tree v v
+  Left  : Tree lv lm -&gt;
+          (v : Nat) -&gt;
+          Tree v v
+  Right : (v : Nat) -&gt;
+          Tree rv rm -&gt;
+          Tree v rm
+  Node  : Tree lv lm -&gt;
+          (v : Nat) -&gt;
+          Tree rv rm -&gt;
+          Tree v rm
+```
+
+#### Now we ready for some more...
+
+---
+
+class: center, middle
+
+![magic](https://media.giphy.com/media/12NUbkX6p4xOO4/giphy.gif)
+
+---
+
+class: center, middle
+
+# Dependent Types
+
+---
+
+### Require proof!
+
+```idris
+data Tree : Nat -&gt; Nat -&gt; Type where
+  Leaf  : (v : Nat) -&gt;
+          Tree v v
+  Left  : Tree lv lm -&gt;
+          (v : Nat) -&gt;
+          .{auto prf : lm `LT` v} -&gt;
+          Tree v v
+  Right : (v : Nat) -&gt;
+          Tree rv rm -&gt;
+          .{auto prf : v `LT` rm} -&gt;
+          Tree v rm
+  Node  : Tree lv lm -&gt;
+          (v : Nat) -&gt;
+          Tree rv rm -&gt;
+          .{auto prf_l : lm `LT` v} -&gt;
+          .{auto prf_r : v `LT` rm} -&gt;
+          Tree v rm
+```
+
+#### And make the compiler to the heavy lifting.
+
+---
+
+### Leaves
+
+```idris
+*BinaryTree&gt; Leaf 0
+Leaf 0 : Tree 0 0
+```
+
+```idris
+*BinaryTree&gt; Leaf 1
+Leaf 1 : Tree 1 1
+```
+
+```idris
+*BinaryTree&gt; Leaf 2
+Leaf 2 : Tree 2 2
+```
+
+```idris
+*BinaryTree&gt; Leaf 3
+Leaf 3 : Tree 3 3
+```
+
+---
+
+### Left
+
+```idris
+*BinaryTree&gt; Left (Leaf 0) 1
+Left (Leaf 0) 1 : Tree 1 1
+```
+
+```idris
+*BinaryTree&gt; Left (Leaf 0) 2
+Left (Leaf 0) 2 : Tree 2 2
+```
+
+```idris
+*BinaryTree&gt; Left (Leaf 1) 2
+Left (Leaf 1) 2 : Tree 2 2
+```
+
+```idris
+*BinaryTree&gt; Left (Leaf 2) 2
+(input):1:6:When checking argument prf to constructor Main.Left:
+        Can&#39;t find a value of type
+                LTE 3 2
+```
+
+---
+
+### Right
+
+```idris
+*BinaryTree&gt; Right 0 (Leaf 3)
+Right 0 (Leaf 3) : Tree 0 3
+```
+
+```idris
+*BinaryTree&gt; Right 0 (Leaf 2)
+Right 0 (Leaf 2) : Tree 0 2
+```
+
+```idris
+*BinaryTree&gt; Right 0 (Leaf 1)
+Right 0 (Leaf 1) : Tree 0 1
+```
+
+```idris
+*BinaryTree&gt; Right 0 (Leaf 0)
+(input):1:7:When checking argument prf to constructor Main.Right:
+        Can&#39;t find a value of type
+                LTE 1 0
+```
+
+---
+
+### Node
+
+```idris
+*BinaryTree&gt; Node (Leaf 0) 1 (Leaf 2)
+Node (Leaf 0) 1 (Leaf 2) : Tree 1 2
+```
+
+```idris
+*BinaryTree&gt; Node (Leaf 0) 5 (Leaf 10)
+Node (Leaf 0) 5 (Leaf 10) : Tree 5 10
+```
+
+```idris
+*BinaryTree&gt; Node (Leaf 4) 5 (Leaf 10)
+Node (Leaf 4) 5 (Leaf 10) : Tree 5 10
+```
+
+```idris
+*BinaryTree&gt; Node (Leaf 5) 5 (Leaf 10)
+(input):1:6:When checking argument prf_l to constructor Main.Node:
+        Can&#39;t find a value of type
+                LTE 6 5
+```
+
+---
+
+### Binary Tree
+
+```idris
+*BinaryTree&gt; Node (Left (Leaf 0) 3) 5 (Leaf 10)
+Node (Left (Leaf 0) 3) 5 (Leaf 10) : Tree 5 10
+```
+
+```idris
+*BinaryTree&gt; Node (Left (Leaf 0) 3) 5 (Right 7 (Leaf 10))
+Node (Left (Leaf 0) 3) 5 (Right 7 (Leaf 10)) : Tree 5 10
+```
+
+```idris
+*BinaryTree&gt; (Left (Right 0 (Leaf 1)) 2)
+Left (Right 0 (Leaf 1)) 2 : Tree 2 2
+```
+
+  </textarea>
+  <script src="/remark.js"></script>
+  <script>
+    var slideshow = remark.create();
+  </script>
+</body>
