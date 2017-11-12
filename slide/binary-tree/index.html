@@ -273,26 +273,26 @@ data Tree : Nat -&gt; Type where
           Tree v
 ```
 
-#### Our next step is to capture the maximum of the trees values.
+#### Our next step is to capture the minimum and maximum of the trees values.
 
 ---
 
-### Capturing the maximum.
+### Minimum &amp; Maximum
 
 ```idris
-data Tree : Nat -&gt; Nat -&gt; Type where
+data Tree : (min, val, max : Nat) -&gt; Type where
   Leaf  : (v : Nat) -&gt;
-          Tree v v
-  Left  : Tree lv lm -&gt;
+          Tree v v v
+  Left  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          Tree v v
+          Tree ln v v
   Right : (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          Tree v rm
-  Node  : Tree lv lm -&gt;
+          Tree rn rv rx -&gt;
+          Tree v v rx
+  Node  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          Tree v rm
+          Tree rn rv rx -&gt;
+          Tree ln v rx
 ```
 
 #### Now we ready for some more...
@@ -314,23 +314,23 @@ class: center, middle
 ### Require proof!
 
 ```idris
-data Tree : Nat -&gt; Nat -&gt; Type where
+data Tree : (min, val, max: Nat) -&gt; Type where
   Leaf  : (v : Nat) -&gt;
-          Tree v v
-  Left  : Tree lv lm -&gt;
+          Tree v v v
+  Left  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          .{auto prf : lm `LT` v} -&gt;
-          Tree v v
+          .{auto prf_l : lx `LT` v} -&gt;
+          Tree ln v v
   Right : (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          .{auto prf : v `LT` rm} -&gt;
-          Tree v rm
-  Node  : Tree lv lm -&gt;
+          Tree rn rv rx -&gt;
+          .{auto prf_r : v `LT` rn} -&gt;
+          Tree v v rx
+  Node  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          .{auto prf_l : lm `LT` v} -&gt;
-          .{auto prf_r : v `LT` rm} -&gt;
-          Tree v rm
+          Tree rn rv rx -&gt;
+          .{auto prf_l : lx `LT` v} -&gt;
+          .{auto prf_r : v `LT` rn} -&gt;
+          Tree ln v rx
 ```
 
 #### And make the compiler to the heavy lifting.
@@ -341,22 +341,22 @@ data Tree : Nat -&gt; Nat -&gt; Type where
 
 ```idris
 *BinaryTree&gt; Leaf 0
-Leaf 0 : Tree 0 0
+Leaf 0 : Tree 0 0 0
 ```
 
 ```idris
 *BinaryTree&gt; Leaf 1
-Leaf 1 : Tree 1 1
+Leaf 1 : Tree 1 1 1
 ```
 
 ```idris
 *BinaryTree&gt; Leaf 2
-Leaf 2 : Tree 2 2
+Leaf 2 : Tree 2 2 2
 ```
 
 ```idris
 *BinaryTree&gt; Leaf 3
-Leaf 3 : Tree 3 3
+Leaf 3 : Tree 3 3 3
 ```
 
 ---
@@ -365,22 +365,22 @@ Leaf 3 : Tree 3 3
 
 ```idris
 *BinaryTree&gt; Left (Leaf 0) 1
-Left (Leaf 0) 1 : Tree 1 1
+Left (Leaf 0) 1 : Tree 0 1 1
 ```
 
 ```idris
 *BinaryTree&gt; Left (Leaf 0) 2
-Left (Leaf 0) 2 : Tree 2 2
+Left (Leaf 0) 2 : Tree 0 2 2
 ```
 
 ```idris
 *BinaryTree&gt; Left (Leaf 1) 2
-Left (Leaf 1) 2 : Tree 2 2
+Left (Leaf 1) 2 : Tree 1 2 2
 ```
 
 ```idris
 *BinaryTree&gt; Left (Leaf 2) 2
-(input):1:6:When checking argument prf to constructor Main.Left:
+(input):1:6:When checking argument prf_l to constructor Main.Left:
         Can&#39;t find a value of type
                 LTE 3 2
 ```
@@ -391,22 +391,22 @@ Left (Leaf 1) 2 : Tree 2 2
 
 ```idris
 *BinaryTree&gt; Right 0 (Leaf 3)
-Right 0 (Leaf 3) : Tree 0 3
+Right 0 (Leaf 3) : Tree 0 0 3
 ```
 
 ```idris
 *BinaryTree&gt; Right 0 (Leaf 2)
-Right 0 (Leaf 2) : Tree 0 2
+Right 0 (Leaf 2) : Tree 0 0 2
 ```
 
 ```idris
 *BinaryTree&gt; Right 0 (Leaf 1)
-Right 0 (Leaf 1) : Tree 0 1
+Right 0 (Leaf 1) : Tree 0 0 1
 ```
 
 ```idris
 *BinaryTree&gt; Right 0 (Leaf 0)
-(input):1:7:When checking argument prf to constructor Main.Right:
+(input):1:7:When checking argument prf_r to constructor Main.Right:
         Can&#39;t find a value of type
                 LTE 1 0
 ```
@@ -417,17 +417,17 @@ Right 0 (Leaf 1) : Tree 0 1
 
 ```idris
 *BinaryTree&gt; Node (Leaf 0) 1 (Leaf 2)
-Node (Leaf 0) 1 (Leaf 2) : Tree 1 2
+Node (Leaf 0) 1 (Leaf 2) : Tree 0 1 2
 ```
 
 ```idris
 *BinaryTree&gt; Node (Leaf 0) 5 (Leaf 10)
-Node (Leaf 0) 5 (Leaf 10) : Tree 5 10
+Node (Leaf 0) 5 (Leaf 10) : Tree 0 5 10
 ```
 
 ```idris
 *BinaryTree&gt; Node (Leaf 4) 5 (Leaf 10)
-Node (Leaf 4) 5 (Leaf 10) : Tree 5 10
+Node (Leaf 4) 5 (Leaf 10) : Tree 4 5 10
 ```
 
 ```idris
@@ -443,17 +443,17 @@ Node (Leaf 4) 5 (Leaf 10) : Tree 5 10
 
 ```idris
 *BinaryTree&gt; Node (Left (Leaf 0) 3) 5 (Leaf 10)
-Node (Left (Leaf 0) 3) 5 (Leaf 10) : Tree 5 10
+Node (Left (Leaf 0) 3) 5 (Leaf 10) : Tree 0 5 10
 ```
 
 ```idris
 *BinaryTree&gt; Node (Left (Leaf 0) 3) 5 (Right 7 (Leaf 10))
-Node (Left (Leaf 0) 3) 5 (Right 7 (Leaf 10)) : Tree 5 10
+Node (Left (Leaf 0) 3) 5 (Right 7 (Leaf 10)) : Tree 0 5 10
 ```
 
 ```idris
 *BinaryTree&gt; (Left (Right 0 (Leaf 1)) 2)
-Left (Right 0 (Leaf 1)) 2 : Tree 2 2
+Left (Right 0 (Leaf 1)) 2 : Tree 0 2 2
 ```
 
   </textarea>

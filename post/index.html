@@ -159,7 +159,7 @@ article [itemprop="description"] {
   <circle cx="16" cy="16" r="14" />
   <path d="M16 8 L16 16 20 20" />
 </svg>
-<span>1 minute read</span>
+<span>2 minute read</span>
 <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
   <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
 </svg>
@@ -175,7 +175,7 @@ article [itemprop="description"] {
   <div itemprop="description">
     A brief walkthrough of a binary tree in Idris.
 The final result:
-data Tree : Nat -&gt; Nat -&gt; Type where Leaf : (v : Nat) -&gt; Tree v v Left : Tree lv lm -&gt; (v : Nat) -&gt; .{auto prf : lm `LT` v} -&gt; Tree v v Right : (v : Nat) -&gt; Tree rv rm -&gt; .{auto prf : v `LT` rm} -&gt; Tree v rm Node : Tree lv lm -&gt; (v : Nat) -&gt; Tree rv rm -&gt; .
+data Tree : (min, val, max: Nat) -&gt; Type where Leaf : (v : Nat) -&gt; Tree v v v Left : Tree ln lv lx -&gt; (v : Nat) -&gt; .{auto prf_l : lx `LT` v} -&gt; Tree ln v v Right : (v : Nat) -&gt; Tree rn rv rx -&gt; .{auto prf_r : v `LT` rn} -&gt; Tree v v rx Node : Tree ln lv lx -&gt; (v : Nat) -&gt; Tree rn rv rx -&gt; .
   </div>
   
     <nav class="readmore"><a itemprop="url" href="/post/binary-tree/">Read More&nbsp;&raquo;</a></nav>

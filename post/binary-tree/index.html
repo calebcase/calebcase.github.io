@@ -150,7 +150,7 @@ article [itemprop="description"] {
 
 
 <meta itemprop="dateModified" content="2017-11-11T16:00:00-05:00" />
-<meta itemprop="wordCount" content="196">
+<meta itemprop="wordCount" content="224">
 
 
 
@@ -163,7 +163,7 @@ article [itemprop="description"] {
   <circle cx="16" cy="16" r="14" />
   <path d="M16 8 L16 16 20 20" />
 </svg>
-<span>1 minute read</span>
+<span>2 minute read</span>
 <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
   <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
 </svg>
@@ -183,23 +183,23 @@ article [itemprop="description"] {
 
 <p>The final result:</p>
 
-<pre><code class="language-idris">data Tree : Nat -&gt; Nat -&gt; Type where
+<pre><code class="language-idris">data Tree : (min, val, max: Nat) -&gt; Type where
   Leaf  : (v : Nat) -&gt;
-          Tree v v
-  Left  : Tree lv lm -&gt;
+          Tree v v v
+  Left  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          .{auto prf : lm `LT` v} -&gt;
-          Tree v v
+          .{auto prf_l : lx `LT` v} -&gt;
+          Tree ln v v
   Right : (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          .{auto prf : v `LT` rm} -&gt;
-          Tree v rm
-  Node  : Tree lv lm -&gt;
+          Tree rn rv rx -&gt;
+          .{auto prf_r : v `LT` rn} -&gt;
+          Tree v v rx
+  Node  : Tree ln lv lx -&gt;
           (v : Nat) -&gt;
-          Tree rv rm -&gt;
-          .{auto prf_l : lm `LT` v} -&gt;
-          .{auto prf_r : v `LT` rm} -&gt;
-          Tree v rm
+          Tree rn rv rx -&gt;
+          .{auto prf_l : lx `LT` v} -&gt;
+          .{auto prf_r : v `LT` rn} -&gt;
+          Tree ln v rx
 </code></pre>
 
 <p>A couple of things about coming to this solution:</p>
@@ -214,6 +214,8 @@ proofs in <code>Prelude.Nat</code> for <code>LTE</code>. This turned out to not 
 path.</li>
 <li>Once I had removed the overly flexible <code>Empty</code> type and added the maximum
 tracking it was very straight forward.</li>
+<li>While thinking about what was actually proven I realized I forgot to complete
+it with also tracking the minimum.</li>
 </ul>
 
 <hr />
@@ -234,7 +236,7 @@ tracking it was very straight forward.</li>
   
     and tagged <a href="/tags/idris/">idris</a>
   
-  using <span itemprop="wordCount">196</span> words.
+  using <span itemprop="wordCount">224</span> words.
 </p>
 
       

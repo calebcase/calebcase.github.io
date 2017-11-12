@@ -19,7 +19,7 @@
       <guid>http://calebcase.github.io/post/binary-tree/</guid>
       <description>A brief walkthrough of a binary tree in Idris.
 The final result:
-data Tree : Nat -&amp;gt; Nat -&amp;gt; Type where Leaf : (v : Nat) -&amp;gt; Tree v v Left : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; .{auto prf : lm `LT` v} -&amp;gt; Tree v v Right : (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .{auto prf : v `LT` rm} -&amp;gt; Tree v rm Node : Tree lv lm -&amp;gt; (v : Nat) -&amp;gt; Tree rv rm -&amp;gt; .</description>
+data Tree : (min, val, max: Nat) -&amp;gt; Type where Leaf : (v : Nat) -&amp;gt; Tree v v v Left : Tree ln lv lx -&amp;gt; (v : Nat) -&amp;gt; .{auto prf_l : lx `LT` v} -&amp;gt; Tree ln v v Right : (v : Nat) -&amp;gt; Tree rn rv rx -&amp;gt; .{auto prf_r : v `LT` rn} -&amp;gt; Tree v v rx Node : Tree ln lv lx -&amp;gt; (v : Nat) -&amp;gt; Tree rn rv rx -&amp;gt; .</description>
     </item>
     
   </channel>
