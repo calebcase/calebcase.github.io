@@ -205,7 +205,7 @@ data Tree : a -&gt; Type where
 ```
 ---
 
-### This is way to flexible...
+### This is way too flexible...
 
 ```haskell
 data Tree : a -&gt; Type where
@@ -235,7 +235,8 @@ data Tree : Nat -&gt; Type where
 
 #### Let&#39;s be more concrete about the shape this tree can take.
 
-We will do this by removing the `Empty` constructor.
+We will do this by removing the `Empty` constructor and replacing it with
+explicit cases for left, right, and leaf.
 
 ```haskell
 data Tree : Nat -&gt; Type where
@@ -333,7 +334,7 @@ data Tree : (min, val, max: Nat) -&gt; Type where
           Tree ln v rx
 ```
 
-#### And make the compiler to the heavy lifting.
+#### And make the compiler do the heavy lifting.
 
 ---
 
