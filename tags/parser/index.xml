@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Parser on Caleb Case</title>
+    <link>http://calebcase.github.io/tags/parser/</link>
+    <description>Recent content in Parser on Caleb Case</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 29 Mar 2018 16:00:00 -0400</lastBuildDate>
+    
+	<atom:link href="http://calebcase.github.io/tags/parser/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Parsing in C with Advanced GCC Tricks</title>
+      <link>http://calebcase.github.io/slide/parsing-in-c/</link>
+      <pubDate>Thu, 29 Mar 2018 16:00:00 -0400</pubDate>
+      
+      <guid>http://calebcase.github.io/slide/parsing-in-c/</guid>
+      <description>class: center, middle
+Parsing in C with Advanced GCC Tricks class: center, middle
+We will commit many sins; may the CS gods forgive us. Gotos You remember these right?
+int main() { goto a_label; printf(&amp;quot;This won&#39;t be printed.\n&amp;quot;); a_label: printf(&amp;quot;At our label!\n&amp;quot;); return 0; }  $ ./a.out At our label!  &amp;ldquo;infinitely abusable&amp;rdquo; - Kernighan &amp;amp; Ritchie
+Computed Gotos Your typical label:
+a_label:  A pointer to anything:</description>
+    </item>
+    
+  </channel>
+</rss>

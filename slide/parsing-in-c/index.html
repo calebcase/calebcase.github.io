@@ -1,0 +1,284 @@
+<head>
+  <title>
+    Parsing in C with Advanced GCC Tricks | Caleb Case
+  </title>
+  <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
+
+</head>
+<body>
+  <textarea id="source">
+class: center, middle
+
+# Parsing in C with Advanced GCC Tricks
+
+---
+
+class: center, middle
+
+### We will commit many sins; may the CS gods forgive us.
+
+---
+
+## Gotos
+
+You remember these right?
+
+```c
+int
+main()
+{
+  goto a_label;
+
+  printf(&#34;This won&#39;t be printed.\n&#34;);
+
+a_label:
+  printf(&#34;At our label!\n&#34;);
+
+  return 0;
+}
+```
+
+```terminal
+$ ./a.out
+At our label!
+```
+
+_&#34;infinitely abusable&#34;_ - Kernighan &amp; Ritchie
+
+---
+
+## Computed Gotos
+
+Your typical label:
+
+```c
+a_label:
+```
+
+A pointer to anything:
+
+```c
+void *any_label;
+```
+
+Taking the address of a label:
+
+```c
+any_label = &amp;&amp;a_label;
+```
+
+Jumping to the label we are pointing at:
+
+```c
+goto *any_label;
+```
+
+_&#34;And you thought gotos couldn&#39;t be better?&#34;_ - Fictional Dystopian Compiler Writer
+
+https://gcc.gnu.org/onlinedocs/gcc/Labels-as-Values.html
+
+---
+
+```c
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int
+main(int argc, char *argv[])
+{
+  void *where;
+
+  if (strcmp(argv[1], &#34;here&#34;) == 0) {
+      where = &amp;&amp;l_here;
+  } else if (strcmp(argv[1], &#34;there&#34;) == 0) {
+      where = &amp;&amp;l_there;
+  }
+
+  goto *where;
+
+l_done:
+  return 0;
+
+l_here:
+  printf(&#34;Here: %p\n&#34;, &amp;&amp;l_here);
+  goto l_done;
+
+l_there:
+  printf(&#34;There: %p\n&#34;, &amp;&amp;l_there);
+  goto l_done;
+}
+```
+
+---
+
+```terminal
+$ ./a.out here
+Here: 0x560725c586fb
+$ ./a.out there
+There: 0x560ce1317715
+```
+
+---
+
+## Designated Inits
+
+This is standard C99:
+
+```c
+int a[6] = {
+  [4] = 29,
+  [2] = 15
+};
+```
+
+GCC extends this with support for range initializers:
+
+```c
+int widths[] = {
+  [0 ... 9] = 1,
+  [10 ... 99] = 2,
+  [100] = 3
+};
+```
+
+https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
+
+---
+
+```c
+#include &lt;stdio.h&gt;
+
+int
+main()
+{
+  int a[6] = {
+    [4] = 29,
+    [2] = 15
+  };
+
+  int widths[] = {
+    [0 ... 9] = 1,
+    [10 ... 99] = 2,
+    [100] = 3
+  };
+
+  for (int i = 0; i &lt; 6; i&#43;&#43;) {
+    printf(&#34;a[%i] = %i\n&#34;, i, a[i]);
+  }
+
+  printf(&#34;widths[8] = %i\n&#34;, widths[8]);
+  printf(&#34;widths[77] = %i\n&#34;, widths[77]);
+  printf(&#34;widths[100] = %i\n&#34;, widths[100]);
+}
+```
+
+---
+
+```terminal
+$ ./a.out 
+a[0] = 0
+a[1] = 0
+a[2] = 15
+a[3] = 0
+a[4] = 29
+a[5] = 0
+widths[8] = 1
+widths[77] = 2
+widths[100] = 3
+```
+
+---
+
+### Surprises in the Standard Lib
+
+```man
+FGETC(3)                   Linux Programmer&#39;s Manual                  FGETC(3)
+
+NAME
+       fgetc, fgets, getc, getchar, ungetc - input of characters and strings
+
+SYNOPSIS
+       #include &lt;stdio.h&gt;
+
+       int fgetc(FILE *stream);
+
+       char *fgets(char *s, int size, FILE *stream);
+
+       int getc(FILE *stream);
+
+       int getchar(void);
+
+       int ungetc(int c, FILE *stream);
+```
+
+Wait a second... what is this:
+
+```c
+       int ungetc(int c, FILE *stream);
+```
+
+---
+
+```c
+       int ungetc(int c, FILE *stream);
+```
+
+```man
+DESCRIPTION
+       ungetc() pushes c back to stream, cast to unsigned char, where it is
+       available for subsequent read operations.  Pushed-back characters will
+       be returned in reverse order; only one pushback is guaranteed.
+
+RETURN VALUE
+       ungetc() returns c on success, or EOF on error.
+```
+
+```c
+       int fgetc(FILE *stream);
+```
+
+```man
+DESCRIPTION
+       fgetc() reads the next character from stream and returns it as an
+       unsigned char cast to an int, or EOF on end of file or error.
+
+RETURN VALUE
+       fgetc(), getc() and getchar() return the character read as an unsigned
+       char cast to an int or EOF on end of file or error.
+```
+
+So now we have functions we can use to get a single char from a stream... and
+put it back if we don&#39;t want it!
+
+---
+
+We now have everything we need for very basic LL(1) parser!
+
+* Use the designated inits as a way to map from a character to an action we
+  want to take.
+* Abuse those designated inits to also set a default action.
+* Use the computed gotos to be the actions we want.
+* Use more gotos to put the entire thing in a state machine loop.
+
+https://en.wikipedia.org/wiki/LL_parser
+
+---
+
+---
+
+## In the Wild
+
+The tricks explained in these slides were used to create a JSON parser!
+
+https://github.com/calebcase/cjson
+
+Let&#39;s take a closer look...
+
+---
+
+  </textarea>
+  <script src="/remark.js"></script>
+  <script>
+    var slideshow = remark.create();
+  </script>
+</body>
